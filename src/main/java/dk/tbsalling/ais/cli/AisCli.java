@@ -1,11 +1,8 @@
 package dk.tbsalling.ais.cli;
 
 import dk.tbsalling.aismessages.AISInputStreamReader;
-import dk.tbsalling.aismessages.ais.messages.AISMessage;
-import dk.tbsalling.aismessages.ais.messages.BaseStationReport;
-import dk.tbsalling.aismessages.ais.messages.DynamicDataReport;
-import dk.tbsalling.aismessages.ais.messages.ShipAndVoyageData;
-import dk.tbsalling.aismessages.ais.messages.StaticDataReport;
+import dk.tbsalling.aismessages.ais.messages.*;
+import org.apache.commons.cli.*;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -16,12 +13,75 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class AisCli {
+
+    public static final String OPTION_VERBOSE = "verbose";
+    public static final String OPTION_VERBOSE_ABBR = "v";
+    public static final String OPTION_OUTPUT = "output";
+    public static final String OPTION_OUTPUT_ABBR = "o";
+    public static final String OPTION_OUTPUT_FORMAT = "format";
+
+    public static boolean verbose = false;
+
+    private static final Options OPTIONS = new Options();
 
     public static void main(String[] args) {
-        ais2csv(System.in, System.out);
+        addOptions();
+
+        if (args.length <= 1) {
+            help();
+            System.exit(-1);
+        }
+
+        try {
+            parseOptions(args);
+            System.exit(0);
+        } catch (ParseException e) {
+            System.err.println("Command line parsing failed: " + e.getMessage());
+            help();
+            System.exit(-1);
+        }
     }
-    
+
+    private static void addOptions() {
+        OPTIONS.addOption(
+            Option.builder(OPTION_VERBOSE_ABBR).longOpt(OPTION_VERBOSE)
+                .desc("Produce verbose output.")
+                .build()
+        );
+        OPTIONS.addOption(
+            Option.builder(OPTION_OUTPUT_ABBR).longOpt(OPTION_OUTPUT)
+                .hasArg().argName(OPTION_OUTPUT_FORMAT).required()
+                .desc("Output received messages on stdout in given format ('csv').")
+                .build()
+        );
+    }
+
+    private static void help() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "java -jar aiscli.jar", OPTIONS, true );
+    }
+
+    private static void parseOptions(String[] args) throws ParseException {
+        CommandLineParser commandLineParser = new DefaultParser();
+        CommandLine cmdLine = commandLineParser.parse(OPTIONS, args);
+
+        if (cmdLine.hasOption(OPTION_VERBOSE))
+            verbose = true;
+
+        if (cmdLine.hasOption(OPTION_OUTPUT)) {
+            String format = cmdLine.getOptionValue(OPTION_OUTPUT);
+            switch (format) {
+                case "csv":
+                    ais2csv(System.in, System.out);
+                    break;
+                default:
+                    System.err.println("Unknown output format: " + format);
+                    System.exit(-1);
+            }
+        }
+    }
+
     private static void ais2csv(InputStream in, PrintStream out) {
         try (CSVPrinter csvPrinter = CSVFormat.DEFAULT.print(out)) {
             csvPrinter.printRecord(headers());
