@@ -10,7 +10,7 @@ NMEA-armoured AIS messages look like this:
 !AIVDM,2,2,8,A,000000000000000,2*2C
 ```
 
-And by using `aiscli` they can for example be converted into a more manageable CSV format like this:
+And by using `aiscli` they can for example be converted into more manageable formats, such as JSON or CSV:
 
 ```
 received,sourceMmsi,digest,msgtype,valid,lat,lng,cog,sog,cls,shipname,callsigns,shiptype,bow,stern,port,starboard,destination,draught,eta,imo,dev,day,month,year,hour,minute,second
@@ -25,7 +25,7 @@ Usage
 ```
 usage: java -jar aiscli.jar -o <format> [-v]
  -o,--output <format>   Output received messages on stdout in given format
-                        ('csv').
+                        ('csv', 'json').
  -v,--verbose           Produce verbose output.
 ```
  
@@ -43,7 +43,6 @@ Free for non-commercial use. See details in the [LICENSE](LICENSE) file.
 Roadmap
 ---
 - Stateful conversion based on _tracks_ instead of _messages_
-- Conversion to JSON
 - Expression-based filtering based on aisutils
 
 Notes

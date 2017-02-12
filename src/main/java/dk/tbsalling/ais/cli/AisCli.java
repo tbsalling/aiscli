@@ -51,7 +51,7 @@ public class AisCli {
         OPTIONS.addOption(
             Option.builder(OPTION_OUTPUT_ABBR).longOpt(OPTION_OUTPUT)
                 .hasArg().argName(OPTION_OUTPUT_FORMAT).required()
-                .desc("Output received messages on stdout in given format ('csv').")
+                .desc("Output received messages on stdout in given format ('csv', 'json').")
                 .build()
         );
     }
