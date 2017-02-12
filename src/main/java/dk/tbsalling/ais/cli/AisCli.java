@@ -9,6 +9,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.util.logging.LogManager;
+
 public class AisCli {
 
     public static final String OPTION_VERBOSE = "verbose";
@@ -62,8 +64,11 @@ public class AisCli {
         CommandLineParser commandLineParser = new DefaultParser();
         CommandLine cmdLine = commandLineParser.parse(OPTIONS, args);
 
-        if (cmdLine.hasOption(OPTION_VERBOSE))
+        if (cmdLine.hasOption(OPTION_VERBOSE)) {
             verbose = true;
+        } else {
+            LogManager.getLogManager().reset();
+        }
 
         if (cmdLine.hasOption(OPTION_OUTPUT)) {
             String format = cmdLine.getOptionValue(OPTION_OUTPUT);
