@@ -1,6 +1,7 @@
 package dk.tbsalling.ais.cli;
 
 import dk.tbsalling.ais.cli.converters.CsvConverter;
+import dk.tbsalling.ais.cli.converters.JsonConverter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -76,13 +77,15 @@ public class AisCli {
                 case "csv":
                     new CsvConverter().convert(System.in, System.out);
                     break;
+                case "json":
+                    new JsonConverter().convert(System.in, System.out);
+                    break;
                 default:
                     System.err.println("Unknown output format: " + format);
                     System.exit(-1);
             }
         }
     }
-
 
 }
 
