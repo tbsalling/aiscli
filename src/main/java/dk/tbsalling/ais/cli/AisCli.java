@@ -1,7 +1,13 @@
 package dk.tbsalling.ais.cli;
 
-import dk.tbsalling.ais.cli.output.CsvOutputter;
-import org.apache.commons.cli.*;
+import dk.tbsalling.ais.cli.converters.CsvConverter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class AisCli {
 
@@ -63,7 +69,7 @@ public class AisCli {
             String format = cmdLine.getOptionValue(OPTION_OUTPUT);
             switch (format) {
                 case "csv":
-                    new CsvOutputter().ais2csv(System.in, System.out);
+                    new CsvConverter().convert(System.in, System.out);
                     break;
                 default:
                     System.err.println("Unknown output format: " + format);

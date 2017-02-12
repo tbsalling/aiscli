@@ -1,24 +1,33 @@
-package dk.tbsalling.ais.cli.output;
+package dk.tbsalling.ais.cli.converters;
 
 import dk.tbsalling.aismessages.AISInputStreamReader;
-import dk.tbsalling.aismessages.ais.messages.*;
+import dk.tbsalling.aismessages.ais.messages.AISMessage;
+import dk.tbsalling.aismessages.ais.messages.BaseStationReport;
+import dk.tbsalling.aismessages.ais.messages.DynamicDataReport;
+import dk.tbsalling.aismessages.ais.messages.ShipAndVoyageData;
+import dk.tbsalling.aismessages.ais.messages.StaticDataReport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvOutputter {
+public class CsvConverter implements Converter {
 
-    public CsvOutputter() {
+    public CsvConverter() {
     }
 
-    public void ais2csv(InputStream in, PrintStream out) {
-        try (CSVPrinter csvPrinter = CSVFormat.DEFAULT.print(out)) {
+    @Override
+    public void convert(InputStream in, OutputStream out) {
+        if (!(out instanceof PrintStream))
+            out = new PrintStream(out);
+
+        try (CSVPrinter csvPrinter = CSVFormat.DEFAULT.print((PrintStream) out)) {
             csvPrinter.printRecord(headers());
 
             if (!(in instanceof BufferedInputStream))
