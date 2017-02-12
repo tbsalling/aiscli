@@ -1,5 +1,6 @@
 package dk.tbsalling.ais.cli.converters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.tbsalling.aismessages.AISInputStreamReader;
 
@@ -25,9 +26,8 @@ public class JsonConverter implements Converter {
                 input,
                 ais -> {
                     try {
-                        String json = mapper.writeValueAsString(ais);
-                        output.println(json);
-                    } catch (Throwable e) {
+                        output.println(mapper.writeValueAsString(ais));
+                    } catch (JsonProcessingException e) {
                         System.err.println(e.getClass().getSimpleName() + ": " + e.getMessage());
                     }
                 }
