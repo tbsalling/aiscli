@@ -133,7 +133,11 @@ public class CsvConverter implements Converter {
             StaticDataReport sdr = (StaticDataReport) ais;
             fields.add(sdr.getShipName());
             fields.add(sdr.getCallsign());
-            fields.add(sdr.getShipType().getValue());
+            try {
+                fields.add(sdr.getShipType().getValue());
+            } catch (Exception e) {
+                fields.add(null);
+            }
             fields.add(sdr.getToBow());
             fields.add(sdr.getToStern());
             fields.add(sdr.getToPort());
@@ -150,7 +154,11 @@ public class CsvConverter implements Converter {
 
         if (ais instanceof ShipAndVoyageData) {
             ShipAndVoyageData svd = (ShipAndVoyageData) ais;
-            fields.add(svd.getDestination());
+            try {
+                fields.add(svd.getDestination());
+            } catch (Exception e) {
+                fields.add(null);
+            }
             fields.add(svd.getDraught());
             fields.add(svd.getEta());
             fields.add(svd.getImo().getIMO());
