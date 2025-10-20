@@ -94,11 +94,11 @@ public class CsvConverter implements Converter {
         List fields = new ArrayList();
 
         try {
-            fields.add(ais.getMetadata().getReceived());
-            fields.add(ais.getSourceMmsi().getMMSI());
+            fields.add(ais.getMetadata().received());
+            fields.add(ais.getSourceMmsi().getMmsi());
             fields.add(bytesToHex(ais.digest()));
             fields.add(ais.getMessageType().getCode());
-            fields.add(ais.isValid());
+            fields.add(true); // In v4.1.0, messages are always valid after parsing
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
@@ -160,8 +160,8 @@ public class CsvConverter implements Converter {
                 fields.add(null);
             }
             fields.add(svd.getDraught());
-            fields.add(svd.getEta());
-            fields.add(svd.getImo().getIMO());
+            fields.add(svd.getEtaAfterReceived().orElse(null));
+            fields.add(svd.getImo().getImo());
             fields.add(svd.getPositionFixingDevice() != null ? svd.getPositionFixingDevice().getValue() : null);
         } else {
             fields.add(null);
