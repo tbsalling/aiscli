@@ -27,10 +27,11 @@ Usage
 `aiscli` is used from the command line like this:
 
 ```
-usage: java -jar aiscli.jar -o <format> [-v]
- -o,--output <format>   Output received messages on stdout in given format
-                        ('csv', 'json').
- -v,--verbose           Produce verbose output.
+usage: java -jar aiscli.jar [-i <file>] -o <format> [-v]
+ -i,--inputfile <file>   Read NMEA input from given file instead of stdin
+ -o,--output <format>    Output received messages on stdout in given
+                         format ('csv', 'json').
+ -v,--verbose            Produce verbose output.
 ```
  
 The tool operates on the shell's standard input and standard output, and can therefore be combined with other command

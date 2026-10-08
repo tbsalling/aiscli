@@ -36,11 +36,6 @@ public class AisCli {
     public static void main(String[] args) {
         addOptions();
 
-        if (args.length <= 1) {
-            help();
-            System.exit(-1);
-        }
-
         try {
             parseOptions(args);
             System.exit(0);
@@ -65,7 +60,7 @@ public class AisCli {
         );
         OPTIONS.addOption(
                 Option.builder(OPTION_FROMFILE_ABBR).longOpt(OPTION_FROMFILE)
-                        .hasArg().argName(OPTION_FROMFILE_NAME).required()
+                        .hasArg().argName(OPTION_FROMFILE_NAME)
                         .desc("Read NMEA input from given file instead of stdin")
                         .build()
         );
