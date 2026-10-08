@@ -16,6 +16,7 @@
  	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>25</maven.compiler.release>
 		<jackson.version>2.22.3</jackson.version>
 	</properties>
 	<licenses>
@@ -86,8 +87,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.16.0</version>
 				<configuration>
-					<source>21</source>
-					<target>21</target>
+					<release>${maven.compiler.release}</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -126,7 +126,7 @@
 		<dependency>
 			<groupId>dk.tbsalling</groupId>
 			<artifactId>aismessages</artifactId>
-			<version>4.1.0</version>
+			<version>5.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>

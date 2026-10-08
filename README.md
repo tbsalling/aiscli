@@ -18,6 +18,10 @@ received,sourceMmsi,digest,msgtype,valid,lat,lng,cog,sog,cls,shipname,callsigns,
 2017-02-12T07:49:00.545Z,413044610,6670FA1D340465261E9482C5FAF0279949AD107F,5,true,,,,,,HAIXUN 1010,,NotAvailable,0,0,0,0,,0.0,00-00 00:00,0,Gps,,,,,,
 ```
 
+Requirements
+---
+`aiscli` requires Java 25 or later.
+
 Usage
 ---
 `aiscli` is used from the command line like this:

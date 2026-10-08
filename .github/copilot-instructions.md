@@ -4,9 +4,9 @@
 AISCli is a command-line utility for parsing, filtering, and manipulating NMEA-armoured AIS (Automatic Identification System) messages. It converts raw AIS messages into more manageable formats like JSON or CSV.
 
 ## Technology Stack
-- **Language**: Java 21
+- **Language**: Java 25
 - **Build Tool**: Maven
-- **Key Dependency**: aismessages v4.1.0
+- **Key Dependency**: aismessages v5.0.0
 - **Output Formats**: JSON, CSV
 
 ## Project Structure
@@ -34,7 +34,7 @@ aiscli/
 - **Package**: `mvn package`
 - **Run**: `java -jar target/aiscli-1.0-SNAPSHOT-jar-with-dependencies.jar -o <format>`
 
-Note: Java 21 is required. Set `JAVA_HOME` to Java 21 before building.
+Note: Java 25 is required. Set `JAVA_HOME` to Java 25 before building.
 
 ## Code Style and Conventions
 - Follow standard Java naming conventions
@@ -49,7 +49,9 @@ Note: Java 21 is required. Set `JAVA_HOME` to Java 21 before building.
   - Method names follow strict camelCase (e.g., `getMmsi()` not `getMMSI()`)
   - Metadata class is now a Record with accessor methods (e.g., `received()` not `getReceived()`)
   - Some methods return `Optional` types (e.g., `getEtaAfterReceived()`)
-- The project requires Java 21 due to the aismessages dependency
+- aismessages v5.0.0 replaced the `String` bit string with a packed `BitString` type
+  (e.g. `Metadata.bitString()`); `JsonConverter` registers a Jackson serializer that writes it as a `'0'`/`'1'` string
+- The project requires Java 25 due to the aismessages dependency
 
 ## Key Classes and Interfaces
 - **AISMessage**: Base class for all AIS messages

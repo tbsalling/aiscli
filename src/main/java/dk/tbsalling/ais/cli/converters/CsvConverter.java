@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HexFormat;
 import java.util.List;
 
 public class CsvConverter implements Converter {
@@ -91,88 +94,59 @@ public class CsvConverter implements Converter {
     }
 
     private static Iterable<?> toCsvRecord(AISMessage ais) {
-        List fields = new ArrayList();
+        List<Object> fields = new ArrayList<>(28);
 
+        fields.add(ais.getMetadata().received());
+        fields.add(ais.getSourceMmsi().getMmsi());
         try {
-            fields.add(ais.getMetadata().received());
-            fields.add(ais.getSourceMmsi().getMmsi());
-            fields.add(bytesToHex(ais.digest()));
-            fields.add(ais.getMessageType().getCode());
-            fields.add(true); // In v4.1.0, messages are always valid after parsing
-        } catch(Exception e) {
+            fields.add(HexFormat.of().withUpperCase().formatHex(ais.digest()));
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+        fields.add(ais.getMessageType().getCode());
+        fields.add(true); // Since aismessages 4.1.0, invalid messages are rejected during decoding
 
-        if (ais instanceof DynamicDataReport || ais instanceof BaseStationReport) {
-            if (ais instanceof DynamicDataReport) {
-                DynamicDataReport ddr = (DynamicDataReport) ais;
-                fields.add(ddr.getLatitude());
-                fields.add(ddr.getLongitude());
-            } else if (ais instanceof BaseStationReport) {
-                BaseStationReport bsr = (BaseStationReport) ais;
-                fields.add(bsr.getLatitude());
-                fields.add(bsr.getLongitude());
-            }
+        if (ais instanceof DynamicDataReport ddr) {
+            fields.add(ddr.getLatitude());
+            fields.add(ddr.getLongitude());
+        } else if (ais instanceof BaseStationReport bsr) {
+            fields.add(bsr.getLatitude());
+            fields.add(bsr.getLongitude());
         } else {
-            fields.add(null);
-            fields.add(null);
+            addNulls(fields, 2);
         }
 
-        if (ais instanceof DynamicDataReport) {
-            DynamicDataReport ddr = (DynamicDataReport) ais;
+        if (ais instanceof DynamicDataReport ddr) {
             fields.add(ddr.getCourseOverGround());
             fields.add(ddr.getSpeedOverGround());
             fields.add(ddr.getTransponderClass().getValue());
         } else {
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
+            addNulls(fields, 3);
         }
 
-        if (ais instanceof StaticDataReport) {
-            StaticDataReport sdr = (StaticDataReport) ais;
+        if (ais instanceof StaticDataReport sdr) {
             fields.add(sdr.getShipName());
             fields.add(sdr.getCallsign());
-            try {
-                fields.add(sdr.getShipType().getValue());
-            } catch (Exception e) {
-                fields.add(null);
-            }
+            fields.add(sdr.getShipType() != null ? sdr.getShipType().getValue() : null);
             fields.add(sdr.getToBow());
             fields.add(sdr.getToStern());
             fields.add(sdr.getToPort());
             fields.add(sdr.getToStarboard());
         } else {
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
+            addNulls(fields, 7);
         }
 
-        if (ais instanceof ShipAndVoyageData) {
-            ShipAndVoyageData svd = (ShipAndVoyageData) ais;
-            try {
-                fields.add(svd.getDestination());
-            } catch (Exception e) {
-                fields.add(null);
-            }
+        if (ais instanceof ShipAndVoyageData svd) {
+            fields.add(svd.getDestination());
             fields.add(svd.getDraught());
             fields.add(svd.getEtaAfterReceived().orElse(null));
             fields.add(svd.getImo().getImo());
             fields.add(svd.getPositionFixingDevice() != null ? svd.getPositionFixingDevice().getValue() : null);
         } else {
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
+            addNulls(fields, 5);
         }
 
-        if (ais instanceof BaseStationReport) {
-            BaseStationReport bsr = (BaseStationReport) ais;
+        if (ais instanceof BaseStationReport bsr) {
             fields.add(bsr.getDay());
             fields.add(bsr.getMonth());
             fields.add(bsr.getYear());
@@ -180,12 +154,7 @@ public class CsvConverter implements Converter {
             fields.add(bsr.getMinute());
             fields.add(bsr.getSecond());
         } else {
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
-            fields.add(null);
+            addNulls(fields, 6);
         }
 
         if (fields.size() != 28)
@@ -194,16 +163,8 @@ public class CsvConverter implements Converter {
         return fields;
     }
 
-    private static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars);
+    private static void addNulls(List<Object> fields, int n) {
+        fields.addAll(Collections.nCopies(n, null));
     }
-
-    private final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
 }
