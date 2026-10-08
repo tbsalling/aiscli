@@ -2,6 +2,7 @@ package dk.tbsalling.ais.cli.converters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -27,6 +28,7 @@ public class JsonConverter implements Converter {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module());
         mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         // BitString has no bean properties; serialize it as its legacy '0'/'1' string representation
         mapper.registerModule(new SimpleModule().addSerializer(BitString.class, ToStringSerializer.instance));
         AISInputStreamReader streamReader = new AISInputStreamReader(

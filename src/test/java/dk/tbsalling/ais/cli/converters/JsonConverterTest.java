@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,15 @@ class JsonConverterTest {
         for (JsonNode message : convertSample()) {
             String bitString = message.at("/metadata/bitString").asText();
             assertTrue(bitString.matches("[01]+"), bitString);
+        }
+    }
+
+    @Test
+    void serializesReceivedTimestampAsIsoText() throws IOException {
+        for (JsonNode message : convertSample()) {
+            JsonNode received = message.at("/metadata/received");
+            assertTrue(received.isTextual(), received.toString());
+            Instant.parse(received.asText());
         }
     }
 
